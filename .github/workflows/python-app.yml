@@ -34,6 +34,10 @@ jobs:
     - name: Test with pytest
       env:
         SECRET_KEY: ${{ secrets.SECRET_KEY }}
+        POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+        POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+        POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+        JWT_KEY: ${{ secrets.JWT_KEY }}
       run: |
         pytest -v back-end/test_app.py
         
@@ -59,5 +63,7 @@ jobs:
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
+      env:
+        SECRET_KEY: ${{ secrets.SECRET_KEY }}
       run: |
         pytest -v front-end/test_app.py
