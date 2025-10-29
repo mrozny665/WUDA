@@ -33,11 +33,11 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
       run: |
-        pytest -v front-end/test_app.py
+        pytest -v back-end/test_app.py
         
   frontend:
     runs-on: ubuntu-latest
-    name: Frontend
+    name: Front-End
     steps:
     - uses: actions/checkout@v4
     - name: Set up Python 3.10
@@ -58,4 +58,4 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
       run: |
-        pytest -v front-end/test-app.py
+        pytest -v front-end/test_app.py
