@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wuda-database-deployment
+  labels:
+    app: wuda
+spec:
+  replicas: {{ .Values.database.replicas }}
+  selector:
+    matchLabels:
+      app: wuda
+  template:
+    metadata:
+      labels:
+        app: wuda
+    spec:
+      containers:
+      - name: wuda-database
+        image: "postgres:latest"
+        ports:
+        - containerPort: 80
+        env:
+          - name: POSTGRES_PASSWORD
+            value: alamakota
+          - name: POSTGRES_USER
+            value: board_games
+          - name: POSTGRES_DB
+            value: games

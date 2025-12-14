@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wuda-backend-deployment
+  labels:
+    app: wuda
+spec:
+  replicas: {{ .Values.backend.replicas }}
+  selector:
+    matchLabels:
+      app: wuda
+  template:
+    metadata:
+      labels:
+        app: wuda
+    spec:
+      containers:
+      - name: wuda-backend
+        image: "{{ .Values.backend.image.repository  }}:{{ .Values.backend.image.tag }}"
+        ports:
+        - containerPort: 80
+        env:
+          - name: POSTGRES_DB
+            value: "your_database_name"
+          - name: POSTGRES_USER
+            value: "your_database_user"
+          - name: POSTGRES_PASSWORD
+            value: "your_database_password"
+          - name: POSTGRES_HOST
+            value: "localhost"
+          - name: PORT
+            value: "5432"
+          - name: JWT_KEY
+            value: "your_secret_jwt_key"
+          - name: APP_PORT
+            value: "5000"

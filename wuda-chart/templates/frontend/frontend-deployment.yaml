@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wuda-frontend-deployment
+  labels:
+    app: wuda
+spec:
+  replicas: {{ .Values.frontend.replicas }}
+  selector:
+    matchLabels:
+      app: wuda
+  template:
+    metadata:
+      labels:
+        app: wuda
+    spec:
+      containers:
+      - name: wuda-frontend
+        image: "{{ .Values.frontend.image.repository  }}:{{ .Values.frontend.image.tag }}"
+        ports:
+        - containerPort: 80
+        env:
+          - name: SECRET_KEY
+            value: "your_secret_key_here"
+          - name: BACKEND_HOSTNAME
+            value: "localhost"
+          - name: BACKEND_PORT
+            value: "5000"
+          - name: SERVER_PORT
+            value: "8000"
