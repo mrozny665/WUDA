@@ -1,35 +1,49 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: wuda-backend-deployment
+  name: {{ include "wuda-chart.fullname" . }}-backend-deployment
   labels:
-    app: wuda
+    {{ include "wuda-chart.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.backend.replicas }}
   selector:
     matchLabels:
-      app: wuda
+      {{ include "wuda-chart.selectorLabels" . | nindent 6 }}
+      tier: backend
   template:
     metadata:
       labels:
-        app: wuda
+        {{ include "wuda-chart.labels" . | nindent 8 }}
+        tier: backend
     spec:
       containers:
-      - name: wuda-backend
+      - name: {{ .Chart.Name }}-backend
         image: "{{ .Values.backend.image.repository  }}:{{ .Values.backend.image.tag }}"
         ports:
-        - containerPort: 80
+        - containerPort: 5000
+        livenessProbe:
+          httpGet:
+            path: /liveness
+            port: 5000
+          initialDelaySeconds: 20
+          periodSeconds: 3
+        readinessProbe:
+          httpGet:
+            path: /readiness
+            port: 5000
+          initialDelaySeconds: 10
+          periodSeconds: 3
         env:
           - name: POSTGRES_DB
-            value: "your_database_name"
+            value: "games"
           - name: POSTGRES_USER
-            value: "your_database_user"
+            value: "board_games"
           - name: POSTGRES_PASSWORD
-            value: "your_database_password"
+            value: "alamakota"
           - name: POSTGRES_HOST
-            value: "localhost"
+            value: "{{ include "wuda-chart.fullname" . }}-database-service"
           - name: PORT
-            value: "5432"
+            value: "5000"
           - name: JWT_KEY
             value: "your_secret_jwt_key"
           - name: APP_PORT

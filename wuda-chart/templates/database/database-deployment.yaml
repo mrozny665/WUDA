@@ -1,24 +1,26 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: wuda-database-deployment
+  name: {{ include "wuda-chart.fullname" . }}-database-deployment
   labels:
-    app: wuda
+    {{ include "wuda-chart.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.database.replicas }}
   selector:
     matchLabels:
-      app: wuda
+      {{ include "wuda-chart.selectorLabels" . | nindent 6 }}
+      tier: database
   template:
     metadata:
       labels:
-        app: wuda
+        {{ include "wuda-chart.labels" . | nindent 8 }}
+        tier: database
     spec:
       containers:
-      - name: wuda-database
+      - name: {{ .Chart.Name }}-database
         image: "postgres:latest"
         ports:
-        - containerPort: 80
+        - containerPort: 5432
         env:
           - name: POSTGRES_PASSWORD
             value: alamakota

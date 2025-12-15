@@ -1,30 +1,44 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: wuda-frontend-deployment
+  name: {{ include "wuda-chart.fullname" . }}-frontend-deployment
   labels:
-    app: wuda
+    {{ include "wuda-chart.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.frontend.replicas }}
   selector:
     matchLabels:
-      app: wuda
+      {{ include "wuda-chart.selectorLabels" . | nindent 6 }}
+      tier: frontend
   template:
     metadata:
       labels:
-        app: wuda
+        {{ include "wuda-chart.labels" . | nindent 8 }}
+        tier: frontend
     spec:
       containers:
-      - name: wuda-frontend
+      - name: {{ .Chart.Name }}-frontend
         image: "{{ .Values.frontend.image.repository  }}:{{ .Values.frontend.image.tag }}"
         ports:
         - containerPort: 80
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 3
+          periodSeconds: 3
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 10
+          periodSeconds: 3
         env:
           - name: SECRET_KEY
             value: "your_secret_key_here"
           - name: BACKEND_HOSTNAME
-            value: "localhost"
+            value: "wuda-backend-service"
           - name: BACKEND_PORT
             value: "5000"
           - name: SERVER_PORT
-            value: "8000"
+            value: "80"
